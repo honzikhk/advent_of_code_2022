@@ -29,34 +29,30 @@ What would your total score be if everything goes exactly according to your stra
 Your puzzle answer was 13484.
 """
 
-
 def calc_score(input):
+    res = {
+        "A Y": "win", "B Z": "win", "C X": "win",
+        "A Z": "loss", "B X": "loss", "C Y": "loss",
+        "A X": "draw", "B Y": "draw", "C Z": "draw"
+        }
     my_shape_score = {"X": 1, "Y": 2, "Z": 3}
-    opponent_shape_score = {"A": 1, "B": 2, "C": 3}
     my_score = 0
 
     with open(input, "r") as file:
         data = file.readlines()
 
     for round in data:
-        my_shape = int(my_shape_score[round[2]])
-        opponent_shape = int(opponent_shape_score[round[0]])
+        result = res[round[0:3]]
+        score = my_shape_score[round[2]]
 
-        if opponent_shape == 1 and my_shape == 3:
-            my_score += my_shape
+        if result == "win":
+            my_score += 6 + score
 
-        elif opponent_shape == 3 and my_shape == 1:
-            my_score += 6 + my_shape
-
-        elif opponent_shape < my_shape:
-            my_score += 6 + my_shape
-
-        elif opponent_shape == my_shape:
-            my_score += 3 + my_shape
+        elif result == "loss":
+            my_score += score
 
         else:
-            my_score += my_shape
-
+            my_score += 3 + score
     return my_score
 
 

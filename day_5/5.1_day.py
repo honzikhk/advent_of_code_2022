@@ -53,17 +53,86 @@ def build_stacks(list_of_indexes):
     for stack in range(1, max(stacks) + 1):
         stacks[stack] = build_one_stack(index)
         index += 4
-
-
     return stacks
 
-test_data = {
+
+def separate_movements(raw_data):
+    """ Creates list of movements """
+    data_movements = []
+    for line in raw_data:
+        if line.startswith("m"):
+            data_movements.append(line)
+    return data_movements
+
+
+
+test_stacks = {
     1: [' ', 'N', 'Z'],
     2: ['D', 'C', 'M'],
     3: [' ', ' ', 'P']
     }
 
+test_movements = [
+    "move 1 from 2 to 1",
+    "move 3 from 1 to 3",
+    "move 2 from 2 to 1",
+    "move 1 from 1 to 2"
+]
 
-stacks = build_stacks(indexes_of_stacks)
-print("all stacks:")
-pp.pprint(build_stacks(indexes_of_stacks))
+
+stacks = test_stacks# build_stacks(indexes_of_stacks)        # dictionary
+movements = test_movements # separate_movements(data)            # list
+
+
+def one_move(from_stack, to_stack):
+    """ Removing box from stack """
+    box = ""
+    for position in stacks[from_stack]:
+
+        if position != " ":
+            box = position
+            index = stacks[from_stack].index(position)
+            stacks[from_stack][index] = " "
+            break
+
+    """ Adding new box """
+    for i in range(len(stacks[to_stack])):
+        if stacks[to_stack][i] != " ":
+            index = i - 1
+            stacks[to_stack][index] = box
+            break       # new
+
+
+
+def extract_data(line_of_move):
+    lst = line_of_move.split()
+    result = []
+    for el in lst:
+        try:
+            result.append(int(el))
+        except:
+            continue
+    if len(result) == 3:
+        return result
+    else:
+        raise ValueError("Wrong number of commands")
+
+
+def make_movements(movements):
+    for movement in movements:
+        _ = extract_data(movement)
+        moves = _[0]
+        from_stack = _[1]
+        to_stack = _[2]
+        for move in range(moves):
+            one_move(from_stack, to_stack)
+    return stacks
+
+new_stacks = make_movements(movements)
+pp.pprint(new_stacks)
+
+
+# change the direction adding boxes to the list. so then i can just do .pop .append methods. Now i am limited the size of the list.
+# so whne i add fourth element to the list, list just grow. now i go opposite direction to index 0. index 0 is limit for me
+
+

@@ -38,14 +38,17 @@ crates = separate_crates(data)
 def build_one_stack(index_of_stack):
     _ = []
     for line in crates:
-        _.append(line[index_of_stack])
-    return _
+        if line[index_of_stack] == " ":
+            continue
+        else:
+            _.append(line[index_of_stack])
+    return _[::-1]          # reverse method returned None, so i used [::-1]
 
 
 def build_stacks(list_of_indexes):
     """ Creates dictionary with keys 1 - 9, values will be empty lists"""
     stacks = {}
-    for i in range(1, list_of_indexes[-1] + 1):         # [-1] stands for last(the highest) index in the list
+    for i in range(1, list_of_indexes[-1] + 1):         # [-1] stands for last(the highest) element in the list
         stacks[i] = []
 
     """ From each line takes the symbol of box. index 1, 5, 9 ... """
@@ -55,6 +58,7 @@ def build_stacks(list_of_indexes):
         index += 4
     return stacks
 
+pp.pprint(build_stacks(indexes_of_stacks))
 
 def separate_movements(raw_data):
     """ Creates list of movements """
@@ -67,9 +71,9 @@ def separate_movements(raw_data):
 
 
 test_stacks = {
-    1: [' ', 'N', 'Z'],
-    2: ['D', 'C', 'M'],
-    3: [' ', ' ', 'P']
+    1: ['Z', 'N'],
+    2: ['M', 'C', 'D'],
+    3: ['P']
     }
 
 test_movements = [
@@ -80,27 +84,16 @@ test_movements = [
 ]
 
 
-stacks = test_stacks# build_stacks(indexes_of_stacks)        # dictionary
-movements = test_movements # separate_movements(data)            # list
+stacks = build_stacks(indexes_of_stacks)        # dictionary
+movements = separate_movements(data)            # list
 
 
 def one_move(from_stack, to_stack):
-    """ Removing box from stack """
-    box = ""
-    for position in stacks[from_stack]:
-
-        if position != " ":
-            box = position
-            index = stacks[from_stack].index(position)
-            stacks[from_stack][index] = " "
-            break
+    """ Removing box from stack """  
+    box = stacks[from_stack].pop()
 
     """ Adding new box """
-    for i in range(len(stacks[to_stack])):
-        if stacks[to_stack][i] != " ":
-            index = i - 1
-            stacks[to_stack][index] = box
-            break       # new
+    stacks[to_stack].append(box)
 
 
 
@@ -128,11 +121,14 @@ def make_movements(movements):
             one_move(from_stack, to_stack)
     return stacks
 
+
+def create_final_message(final_position_of_boxes):
+    message = ""
+    for key in final_position_of_boxes:
+        message += final_position_of_boxes[key][-1]
+    return message
+
+
 new_stacks = make_movements(movements)
 pp.pprint(new_stacks)
-
-
-# change the direction adding boxes to the list. so then i can just do .pop .append methods. Now i am limited the size of the list.
-# so whne i add fourth element to the list, list just grow. now i go opposite direction to index 0. index 0 is limit for me
-
-
+print(f"message: {create_final_message(new_stacks)}")

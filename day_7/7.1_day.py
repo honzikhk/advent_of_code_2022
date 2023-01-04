@@ -23,26 +23,9 @@ def count_the_size_of_directories(formated_data):       # maybe delete this
             directories_size[name_of_directory] = []
     return directories_size
 
+
 directories_size = count_the_size_of_directories(data)
-print(f"dicts of sizes: {directories_size}")
-
-
-# def separate_directories(formated_data):
-#     list_of_blocks = []
-#     _ = []
-#     for command in formated_data:
-        
-#         if command == "$ cd /":
-#             continue
-#         if command == "$ cd ..":
-#             continue
-        
-#         if command[0:4] == "$ cd":
-#             list_of_blocks.append(_.copy())
-#             _.clear()
-#             continue
-#         _.append(command)
-#     return list_of_blocks
+# print(f"dicts of sizes: {directories_size}")
 
 
 def dummy_find_dirs(formated_data):
@@ -52,7 +35,8 @@ def dummy_find_dirs(formated_data):
             all_dirrs.append(command)
     return all_dirrs
 
-print(f"all dirrs finded by dommy function: {dummy_find_dirs(data)}")
+list_of_directories = dummy_find_dirs(data)
+print(f"all dirrs finded by dummy function: {list_of_directories}")
 
 
 def make_system(formated_data):
@@ -73,6 +57,48 @@ system_in_dict = make_system(data)
 print(f"result of make_system: {system_in_dict}")
 
 
+def sum_all_files(dictionary_system):
+    dictionary_of_sums = {}
+    for dir in dictionary_system:
+        sum_of_sizes = 0
+        list_of_content = []
+        for file in dictionary_system[dir]:
+            try:
+                size_of_file = int(file.split()[0])
+                sum_of_sizes += size_of_file
+            except:
+                list_of_content.append(file[4])
+        list_of_content.append(sum_of_sizes)
+        if len(list_of_content) == 1:
+            dictionary_of_sums[dir] = list_of_content[0]
+        else:
+            dictionary_of_sums[dir] = list_of_content
+    return dictionary_of_sums
 
 
+counted_files = sum_all_files(system_in_dict)
+print(f"sum_all_files: {counted_files}")
 
+only_sizes = {}
+
+def convert_dirs_to_sizes(dict_with_all_files_counted):
+    dictionary_result = {}
+    for part in dict_with_all_files_counted:
+        list_of_content = []
+        try:    
+            for file in dict_with_all_files_counted[part]:
+                if isinstance(file, int):
+                    list_of_content.append(file)
+                else:
+                    list_of_content.append(dict_with_all_files_counted[file])
+            dictionary_result[part] = list_of_content
+        except:
+            only_sizes[part] = dict_with_all_files_counted[part]
+    return dictionary_result
+
+print(f"coverted sizes: {convert_dirs_to_sizes(counted_files)}")
+print(f"only sizes: {only_sizes}")
+
+
+# fix the problem with lists in result. maybe make two functions to sum sizes in lists...
+# first sum directories that content only one sub-folder, then again, again...

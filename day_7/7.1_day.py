@@ -76,28 +76,61 @@ def sum_all_files(dictionary_system):
     return dictionary_of_sums
 
 
-counted_files = sum_all_files(system_in_dict)
+counted_files = sum_all_files(system_in_dict)       # good
 print(f"sum_all_files: {counted_files}")
 
-only_sizes = {}
 
-def convert_dirs_to_sizes(dict_with_all_files_counted):
+def separate_counted_folders(dict_with_all_files_counted):
     dictionary_result = {}
     for part in dict_with_all_files_counted:
-        list_of_content = []
-        try:    
-            for file in dict_with_all_files_counted[part]:
-                if isinstance(file, int):
-                    list_of_content.append(file)
-                else:
-                    list_of_content.append(dict_with_all_files_counted[file])
-            dictionary_result[part] = list_of_content
-        except:
-            only_sizes[part] = dict_with_all_files_counted[part]
+        if isinstance(dict_with_all_files_counted[part], int):
+            dictionary_result[part] = dict_with_all_files_counted[part]
     return dictionary_result
 
-print(f"coverted sizes: {convert_dirs_to_sizes(counted_files)}")
+
+only_sizes = separate_counted_folders(counted_files)
 print(f"only sizes: {only_sizes}")
+
+def reduce_known_dirs(dict_with_all_files_counted):
+    for part in dict_with_all_files_counted:
+        content = dict_with_all_files_counted[part]
+        if isinstance(content, list):   #  and len(content) == 2
+            new_content = []
+            for each in content:
+                if isinstance(each, str):
+                    try:
+                        new_content.append(content[each])
+                    except:
+                        new_content.append(each)
+                else:
+                    new_content.append(each)
+            dict_with_all_files_counted[part] = new_content
+        else:
+            continue
+    return
+
+
+
+
+# only_sizes = {}
+
+# def convert_dirs_to_sizes(dict_with_all_files_counted):
+#     dictionary_result = {}
+#     for part in dict_with_all_files_counted:
+#         list_of_content = []
+#         try:    
+#             for file in dict_with_all_files_counted[part]:
+#                 if isinstance(file, int):
+#                     list_of_content.append(file)
+#                 else:
+#                     list_of_content.append(dict_with_all_files_counted[file])
+#             dictionary_result[part] = list_of_content
+#         except:
+#             only_sizes[part] = dict_with_all_files_counted[part]
+#     return dictionary_result
+
+# print(f"coverted sizes: {convert_dirs_to_sizes(counted_files)}")
+# print(f"only sizes: {only_sizes}")
 
 
 # fix the problem with lists in result. maybe make two functions to sum sizes in lists...

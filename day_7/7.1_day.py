@@ -1,5 +1,7 @@
 # most size of directory: 100 000
 
+only_sizes = {}
+
 def read_data(input):
     with open(input, "r") as file:
         data = file.readlines()
@@ -89,25 +91,62 @@ def separate_counted_folders(dict_with_all_files_counted):
 
 
 only_sizes = separate_counted_folders(counted_files)
-print(f"only sizes: {only_sizes}")
+#print(f"only sizes: {only_sizes}")
+
+
+def iterate_list(some_list):
+    for item in some_list:
+        yield item
+
 
 def reduce_known_dirs(dict_with_all_files_counted):
+    new_dict = {}
     for part in dict_with_all_files_counted:
         content = dict_with_all_files_counted[part]
-        if isinstance(content, list):   #  and len(content) == 2
-            new_content = []
-            for each in content:
-                if isinstance(each, str):
-                    try:
-                        new_content.append(content[each])
-                    except:
+        try:
+            new_dict[part] = sum(content)
+        except:
+            if isinstance(content, list):   #  and len(content) == 2
+                new_content = []
+                for each in content:
+                    if isinstance(each, str):
+                        try:
+                            if isinstance(dict_with_all_files_counted[each], int):
+
+                                new_content.append(dict_with_all_files_counted[each])
+                            else:
+                                new_content.append(each)
+
+                        except:
+                            new_content.append(each)
+                    else:
                         new_content.append(each)
-                else:
-                    new_content.append(each)
-            dict_with_all_files_counted[part] = new_content
-        else:
-            continue
-    return
+                new_dict[part] = new_content
+            else:
+                only_sizes[part] = content
+                new_dict[part] = content
+    return new_dict
+
+
+
+# def finish():
+#     while
+
+
+
+reduced = reduce_known_dirs(counted_files)
+print()
+print(f"reduced: {reduced}")
+print(f"lenght of reduced: {len(reduced)}")
+print()
+print(only_sizes)
+
+def finish_counting():
+    while len(only_sizes) != len(reduced):
+
+
+
+
 
 
 
@@ -118,7 +157,7 @@ def reduce_known_dirs(dict_with_all_files_counted):
 #     dictionary_result = {}
 #     for part in dict_with_all_files_counted:
 #         list_of_content = []
-#         try:    
+#         try:
 #             for file in dict_with_all_files_counted[part]:
 #                 if isinstance(file, int):
 #                     list_of_content.append(file)
